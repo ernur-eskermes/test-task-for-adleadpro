@@ -40,8 +40,11 @@ class PollDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class QuestionListAPIView(generics.ListAPIView):
-    queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+    def get_queryset(self):
+        qs = Question.objects.filter(user_id=self.kwargs['poll_id'])
+        return qs
 
 
 class QuestionCreateAPIView(generics.CreateAPIView):
@@ -72,7 +75,5 @@ class UserAnswerListAPIView(generics.ListAPIView):
     serializer_class = AnswerDetailSerializer
 
     def get_queryset(self):
-        qs = Answer.objects.filter(
-            user_id=self.kwargs['user_id']
-        )
+        qs = Answer.objects.filter(user_id=self.kwargs['user_id'])
         return qs

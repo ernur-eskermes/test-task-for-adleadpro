@@ -28,7 +28,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             text=validated_data['text'],
             type=validated_data['type'],
             answer=validated_data['answer'],
-            poll=validated_data['poll'],
+            poll_id=self.context['request'].parser_context['kwargs']['poll_id'],
         )
         for choice_answer in validated_data['choiceanswer_set']:
             ChoiceAnswer.objects.create(
@@ -39,7 +39,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         return question
 
     def update(self, instance, validated_data):
-        for field in ['text', 'type', 'poll']:
+        for field in ['text', 'type']:
             if validated_data.get(field):
                 setattr(instance, field, validated_data[field])
         instance.save()
@@ -62,6 +62,9 @@ class QuestionSerializer(serializers.ModelSerializer):
             'poll',
             'choiceanswer_set',
         )
+        extra_kwargs = {
+            'poll': {'read_only': True}
+        }
 
 
 class PollSerializer(serializers.ModelSerializer):
