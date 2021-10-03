@@ -8,8 +8,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file: 
       - ./.env.db
-    networks:
-      - djangonetwork
     restart: on-failure
   web:
     build: 
@@ -18,21 +16,13 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     container_name: web
     volumes:
-      - .:/usr/src/polls_app
+      - ./:/usr/src/app
     ports:
       - 8000:8000
     env_file:
       - ./.env
     depends_on:
       - db
-    links:
-      - db:db
-    networks:
-      - djangonetwork
     restart: on-failure
 volumes:
   postgres_data:
-
-networks:
-    djangonetwork:
-        driver: bridge
