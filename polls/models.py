@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -15,6 +16,15 @@ class Poll(models.Model):
     description = models.TextField(
         'Описание',
     )
+
+    def clean(self):
+        current_obj = Poll.objects.filter(
+            pk=self.pk
+        ).first()
+        if self.start_date != current_obj.start_date:
+            raise ValidationError(
+                'Вы не можете изменить дату начала опроса'
+            )
 
     def __str__(self):
         return self.name
